@@ -46,6 +46,8 @@ public enum GermanHoliday: CaseIterable {
     case newYears
     /// Heilige Drei Könige
     case epiphany
+    /// Frauentag
+    case womensDay
 
     public static var federalHolidays: [GermanHoliday] {
         [
@@ -55,7 +57,8 @@ public enum GermanHoliday: CaseIterable {
 
     public static var nonFederalHolidays: [GermanHoliday] {
         [
-            .epiphany
+            .epiphany,
+            .womensDay
         ]
     }
 
@@ -65,6 +68,8 @@ public enum GermanHoliday: CaseIterable {
             return true
         case .epiphany:
             return [.bw, .by, .st].contains(state)
+        case .womensDay:
+            return state == .be
         }
     }
 
@@ -80,6 +85,10 @@ public enum GermanHoliday: CaseIterable {
         case .epiphany:
             components.day = 6
             components.month = 1
+            return components.date
+        case .womensDay:
+            components.day = 8
+            components.month = 3
             return components.date
         }
     }
