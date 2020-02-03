@@ -2,7 +2,7 @@ import Foundation
 
 extension Date {
     /// Check if the date is a nation-wide holiday.
-    /// - Warning: This does not accurately account for historical data!
+    /// - Warning: This does not accurately account for historical data, especially before 1990.
     public var isGermanFederalHoliday: Bool {
         guard let year = self.gregorianComponents.year else { return false }
         for holiday in GermanHoliday.federalHolidays {
@@ -14,9 +14,21 @@ extension Date {
 
     /// Check if the date is a holiday in the given state.
     /// - Parameter state: A German state.
-    /// - Warning: This does not accurately account for historical data!
+    /// - Warning: This does not accurately account for historical data, especially before 1990.
     public func isGermanHoliday(in state: GermanState) -> Bool {
         guard !self.isGermanFederalHoliday else { return true }
+
+        guard let year = self.gregorianComponents.year else { return false }
+        for holiday in GermanHoliday.nonFederalHolidays {
+            guard
+                holiday.isHoliday(in: state),
+                let holidayDate = holiday.date(in: year)
+            else { continue }
+
+            if self.hasSameDateComponents(as: holidayDate) {
+                return true
+            }
+        }
         return false
     }
 
@@ -30,12 +42,30 @@ extension Date {
 }
 
 public enum GermanHoliday: CaseIterable {
+    /// Neujahr
     case newYears
+    /// Heilige Drei Könige
+    case epiphany
 
     public static var federalHolidays: [GermanHoliday] {
         [
             .newYears
         ]
+    }
+
+    public static var nonFederalHolidays: [GermanHoliday] {
+        [
+            .epiphany
+        ]
+    }
+
+    public func isHoliday(in state: GermanState) -> Bool {
+        switch self {
+        case .newYears:
+            return true
+        case .epiphany:
+            return [.bw, .by, .st].contains(state)
+        }
     }
 
     public func date(in year: Int) -> Date? {
@@ -45,6 +75,10 @@ public enum GermanHoliday: CaseIterable {
         switch self {
         case .newYears:
             components.day = 1
+            components.month = 1
+            return components.date
+        case .epiphany:
+            components.day = 6
             components.month = 1
             return components.date
         }

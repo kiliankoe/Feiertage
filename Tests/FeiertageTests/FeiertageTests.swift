@@ -7,6 +7,13 @@ final class FeiertageTests: XCTestCase {
         XCTAssertTrue(newYears2020.isGermanFederalHoliday)
         XCTAssertTrue(newYears2020.isGermanHoliday(in: .sn))
     }
+
+    func testEpiphany() {
+        let epiphany2020 = DateComponents(2020, 1, 6).date!
+        XCTAssertFalse(epiphany2020.isGermanFederalHoliday)
+        XCTAssertTrue(epiphany2020.isGermanHoliday(in: .by))
+        XCTAssertFalse(epiphany2020.isGermanHoliday(in: .sn))
+    }
 }
 
 fileprivate extension DateComponents {
