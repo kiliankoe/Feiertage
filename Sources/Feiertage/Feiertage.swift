@@ -5,7 +5,7 @@ extension Date {
     /// - Warning: This does not accurately account for historical data!
     public var isGermanFederalHoliday: Bool {
         guard let year = self.gregorianComponents.year else { return false }
-        for holiday in GermanHoliday.allCases {
+        for holiday in GermanHoliday.federalHolidays {
             guard let holidayDate = holiday.date(in: year) else { continue }
             if self.hasSameDateComponents(as: holidayDate) { return true }
         }
@@ -31,6 +31,12 @@ extension Date {
 
 public enum GermanHoliday: CaseIterable {
     case newYears
+
+    public static var federalHolidays: [GermanHoliday] {
+        [
+            .newYears
+        ]
+    }
 
     public func date(in year: Int) -> Date? {
         var components = DateComponents()
